@@ -306,6 +306,10 @@ class SessionService : Service() {
     }
 
     private fun tuDebug(linuxDriverId: String): String? {
+        // TU_DEBUG is Turnip's own switch, read by no other driver. On a Mali the session's driver
+        // is PanVK or the vendor ICD, which never look at it, and a stray value in the environment
+        // is a false lead in a bug report.
+        if (!DeviceSupport.adreno()) return null
         val override = File(Environment.getExternalStorageDirectory(), TU_DEBUG_SWITCH)
             .takeIf { it.isFile }?.let { FileUtils.readString(it)?.trim() }
         if (!override.isNullOrEmpty()) return override
